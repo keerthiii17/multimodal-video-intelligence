@@ -5,3 +5,4 @@ __pycache__/
 *.wav
 *.jpg
 *.png
+backend/cache/processed_videos.json
