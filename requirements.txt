@@ -1,0 +1,8 @@
+yt-dlp
+ffmpeg-python
+openai-whisper
+opencv-python
+pytesseract
+faiss-cpu
+fastapi
+uvicorn
