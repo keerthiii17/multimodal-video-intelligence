@@ -5,6 +5,7 @@ from backend.cache.cache_manager import (
     mark_video_processed
 )
 from backend.processing.audio import extract_audio
+from backend.processing.transcribe import transcribe_audio
 
 if __name__ == "__main__":
     video_path = ingest_video(
@@ -19,15 +20,19 @@ if __name__ == "__main__":
     else:
         print("New video. Processing pipeline...")
 
-        # 🔹 Day 4 addition
         audio_path = extract_audio(video_path)
         print(f"Audio extracted at: {audio_path}")
+
+        transcript_path = transcribe_audio(audio_path)
+        print(f"Transcript saved at: {transcript_path}")
 
         mark_video_processed(
             video_hash,
             {
                 "video_path": str(video_path),
                 "audio_path": str(audio_path),
-                "status": "audio_extracted"
+                "transcript_path": str(transcript_path),
+                "status": "transcribed"
             }
         )
+
