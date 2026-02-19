@@ -11,6 +11,8 @@ from backend.processing.transcribe import transcribe_audio
 from backend.processing.chunk import create_chunks
 from backend.qa.answer import format_answer
 from backend.processing.vision.frames import extract_frames
+from backend.processing.vision.ocr import run_ocr
+
 
 
 
@@ -31,6 +33,11 @@ if __name__ == "__main__":
         # 🎥 Day 9: Frame extraction
     frames_dir = extract_frames(video_path, interval=2)
     print(f"Frames extracted at: {frames_dir}")
+
+    # 🔍 Day 10: OCR on frames
+    ocr_path = run_ocr(frames_dir, interval=2)
+    print(f"OCR results saved at: {ocr_path}")
+
 
     audio_path = extract_audio(video_path)
     print(f"Audio extracted at: {audio_path}")
