@@ -9,6 +9,8 @@ from backend.cache.cache_manager import (
 from backend.processing.audio import extract_audio
 from backend.processing.transcribe import transcribe_audio
 from backend.processing.chunk import create_chunks
+from backend.qa.answer import format_answer
+
 
 if __name__ == "__main__":
     video_path = ingest_video(
@@ -31,14 +33,16 @@ if __name__ == "__main__":
 
         chunk_path = create_chunks(transcript_path)
         print(f"Chunks saved at: {chunk_path}")
-        # 🔍 Day 7 test: semantic search
+       # 🔍 Day 8: Question → Timestamped Answer
         embed_chunks(chunk_path)
 
-        print("\n🔍 Query Test:")
-        results = search_chunks("What is the main topic discussed in this video?")
+        question = "What is the main idea explained in this video?"
 
-        for r in results:
-         print(f"[{r['start_time']} - {r['end_time']}]: {r['text']}")
+        results = search_chunks(question, top_k=3)
+
+        answer = format_answer(question, results)
+        print("\n" + answer)
+
 
 
         mark_video_processed(
