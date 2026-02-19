@@ -10,7 +10,8 @@ def transcribe_audio(audio_path: Path) -> Path:
     """
     TRANSCRIPT_DIR.mkdir(parents=True, exist_ok=True)
 
-    model = whisper.load_model("base")
+    model = whisper.load_model("base", device="cuda")
+
     result = model.transcribe(
         str(audio_path),
         word_timestamps=True
