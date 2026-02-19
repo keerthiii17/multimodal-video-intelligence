@@ -1,5 +1,7 @@
 from backend.ingest.ingest import ingest_video
 from backend.cache.fingerprint import compute_video_hash
+from backend.qa.embed import embed_chunks
+from backend.qa.search import search_chunks
 from backend.cache.cache_manager import (
     is_video_processed,
     mark_video_processed
@@ -29,6 +31,15 @@ if __name__ == "__main__":
 
         chunk_path = create_chunks(transcript_path)
         print(f"Chunks saved at: {chunk_path}")
+        # 🔍 Day 7 test: semantic search
+        embed_chunks(chunk_path)
+
+        print("\n🔍 Query Test:")
+        results = search_chunks("What is the main topic discussed in this video?")
+
+        for r in results:
+         print(f"[{r['start_time']} - {r['end_time']}]: {r['text']}")
+
 
         mark_video_processed(
             video_hash,
@@ -40,5 +51,7 @@ if __name__ == "__main__":
                 "status": "chunked"
             }
         )
+
+
 
 
