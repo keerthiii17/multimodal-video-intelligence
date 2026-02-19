@@ -12,13 +12,15 @@ from backend.processing.chunk import create_chunks
 from backend.qa.answer import format_answer
 from backend.processing.vision.frames import extract_frames
 from backend.processing.vision.ocr import run_ocr
+from backend.processing.vision.code_detect import detect_code_from_ocr
+
 
 
 
 
 if __name__ == "__main__":
     video_path = ingest_video(
-        source="https://www.youtube.com/watch?v=OfkYUaCp3mc",
+        source="https://www.youtube.com/watch?v=kGN46Z3y4WM",
         source_type="youtube"
     )
     
@@ -37,6 +39,11 @@ if __name__ == "__main__":
     # 🔍 Day 10: OCR on frames
     ocr_path = run_ocr(frames_dir, interval=2)
     print(f"OCR results saved at: {ocr_path}")
+    
+      # 🧠 Day 11: Code detection
+    code_path = detect_code_from_ocr(ocr_path)
+    print(f"Code segments saved at: {code_path}")
+
 
 
     audio_path = extract_audio(video_path)
