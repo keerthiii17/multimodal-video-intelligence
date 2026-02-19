@@ -6,6 +6,7 @@ from backend.cache.cache_manager import (
 )
 from backend.processing.audio import extract_audio
 from backend.processing.transcribe import transcribe_audio
+from backend.processing.chunk import create_chunks
 
 if __name__ == "__main__":
     video_path = ingest_video(
@@ -26,13 +27,18 @@ if __name__ == "__main__":
         transcript_path = transcribe_audio(audio_path)
         print(f"Transcript saved at: {transcript_path}")
 
+        chunk_path = create_chunks(transcript_path)
+        print(f"Chunks saved at: {chunk_path}")
+
         mark_video_processed(
             video_hash,
             {
                 "video_path": str(video_path),
                 "audio_path": str(audio_path),
                 "transcript_path": str(transcript_path),
-                "status": "transcribed"
+                "chunk_path": str(chunk_path),
+                "status": "chunked"
             }
         )
+
 
