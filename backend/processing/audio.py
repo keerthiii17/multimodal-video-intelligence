@@ -5,7 +5,7 @@ AUDIO_DIR = Path("data/audio")
 
 def extract_audio(video_path: Path) -> Path:
     """
-    Extracts audio from video using ffmpeg
+    Extracts audio from video using ffmpeg (mono, 16kHz)
     """
     AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -16,9 +16,10 @@ def extract_audio(video_path: Path) -> Path:
         "-y",
         "-i", str(video_path),
         "-vn",
+        "-ac", "1",
         "-acodec", "pcm_s16le",
         "-ar", "16000",
-        audio_path
+        str(audio_path)
     ]
 
     subprocess.run(command, check=True)
