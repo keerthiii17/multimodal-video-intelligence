@@ -5,21 +5,36 @@ from sentence_transformers import SentenceTransformer
 
 EMBED_DIR = Path("data/embeddings")
 
-def embed_chunks(chunk_path: Path):
-    EMBED_DIR.mkdir(parents=True, exist_ok=True)
+from pathlib import Path
+import json
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+def embed_chunks(
+    chunk_path: Path,
+    output_dir: Path
+) -> Path:
+    """
+    Embed speech-only chunks (baseline embeddings) and save per video.
+    """
+
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     with open(chunk_path, "r", encoding="utf-8") as f:
         chunks = json.load(f)
 
-    texts = [chunk["text"] for chunk in chunks]
+    texts = [c["text"] for c in chunks]
 
-    model = SentenceTransformer("all-MiniLM-L6-v2", device="cuda")
-
+    
     embeddings = model.encode(texts, convert_to_numpy=True)
 
-    np.save(EMBED_DIR / "chunk_embeddings.npy", embeddings)
+    output_path = output_dir / "audio_embeddings.npz"
 
-    with open(EMBED_DIR / "chunk_metadata.json", "w", encoding="utf-8") as f:
-        json.dump(chunks, f, indent=2, ensure_ascii=False)
+    np.savez(
+        output_path,
+        embeddings=embeddings,
+        chunks=chunks
+    )
 
-    return EMBED_DIR / "chunk_embeddings.npy"
+    return output_path
