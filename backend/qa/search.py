@@ -1,26 +1,39 @@
-import json
-import numpy as np
 from pathlib import Path
+import numpy as np
 from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
-EMBED_DIR = Path("data/embeddings")
 
-def cosine_similarity(a, b):
-    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+def search_chunks(
+    question: str,
+    video_dir: Path,
+    top_k: int = 3
+):
+    """
+    Search speech-only embeddings (baseline) for a single video.
+    """
 
-def search_chunks(query: str, top_k: int = 3):
-    embeddings = np.load(EMBED_DIR / "chunk_embeddings.npy")
+    embeddings_path = (
+        video_dir / "baseline_embeddings" / "audio_embeddings.npz"
+    )
 
-    with open(EMBED_DIR / "chunk_metadata.json", "r", encoding="utf-8") as f:
-        metadata = json.load(f)
+    data = np.load(embeddings_path, allow_pickle=True)
+    embeddings = data["embeddings"]
+    chunks = data["chunks"]
 
-    model = SentenceTransformer("all-MiniLM-L6-v2")
-    query_vec = model.encode([query], convert_to_numpy=True)[0]
+    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+    query_embedding = model.encode([question])
 
-    scores = [
-        cosine_similarity(query_vec, emb) for emb in embeddings
-    ]
+    scores = cosine_similarity(query_embedding, embeddings)[0]
+    top_indices = scores.argsort()[::-1][:top_k]
 
-    top_indices = np.argsort(scores)[-top_k:][::-1]
+    results = []
+    for idx in top_indices:
+        results.append({
+            "score": float(scores[idx]),
+            "start_time": chunks[idx]["start_time"],
+            "end_time": chunks[idx]["end_time"],
+            "text": chunks[idx]["text"]
+        })
 
-    return [metadata[i] for i in top_indices]
+    return results

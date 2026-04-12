@@ -1,15 +1,13 @@
 import subprocess
 from pathlib import Path
 
-AUDIO_DIR = Path("data/audio")
-
-def extract_audio(video_path: Path) -> Path:
+def extract_audio(video_path: Path, output_dir: Path) -> Path:
     """
-    Extracts audio from video using ffmpeg (mono, 16kHz)
+    Extracts mono 16kHz audio from video using ffmpeg
     """
-    AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    audio_path = AUDIO_DIR / f"{video_path.stem}.wav"
+    audio_path = output_dir / f"{video_path.stem}.wav"
 
     command = [
         "ffmpeg",

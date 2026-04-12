@@ -1,20 +1,21 @@
-import subprocess
 from pathlib import Path
+import subprocess
 
-def extract_frames(video_path: str, interval: int = 2):
+
+def extract_frames(video_path: Path, output_dir: Path, interval: int = 2) -> Path:
     """
-    Extracts frames every `interval` seconds using FFmpeg.
+    Extract frames from video at a fixed interval (seconds)
     """
-    output_dir = Path("data/frames")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    output_pattern = output_dir / "frame_%06d.jpg"
+    frame_pattern = output_dir / "frame_%04d.jpg"
 
     command = [
         "ffmpeg",
-        "-i", video_path,
+        "-y",
+        "-i", str(video_path),
         "-vf", f"fps=1/{interval}",
-        str(output_pattern)
+        str(frame_pattern)
     ]
 
     subprocess.run(command, check=True)
